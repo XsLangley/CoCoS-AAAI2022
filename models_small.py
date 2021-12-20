@@ -1,19 +1,10 @@
 import torch
 from torch.nn import functional as F
-import dgl
-import os
 from torch import nn
-from dgl.utils import expand_as_pair, check_eq_shape
-from dgl import function as fn
 from dgl.nn.pytorch import SAGEConv
 from dgl.nn.pytorch import GATConv
 from dgl.nn.pytorch import GraphConv
 from dgl.nn.pytorch import SGConv
-
-
-def weight_reset(m):
-    if isinstance(m, nn.Linear):
-        m.reset_parameters()
 
 
 class LinearBlock(nn.Module):
@@ -84,40 +75,6 @@ class GCNBlock(nn.Module):
         self.conv.reset_parameters()
 
 
-class SAGEMLP(nn.Module):
-    def __init__(self, info_dict):
-        super(SAGEMLP, self).__init__()
-        self.info_dict = info_dict
-        self.enc = nn.ModuleList()
-        self.classifier = nn.ModuleList()
-
-        for i in range(info_dict['n_layers']):
-            in_dim = info_dict['in_dim'] if i == 0 else info_dict['hid_dim']
-            out_dim = info_dict['hid_dim']
-            self.enc.append(SAGEBlock(in_dim, out_dim, info_dict['dropout'], info_dict['agg_type'], info_dict['bn']))
-
-        for i in range(info_dict['cls_layers']):
-            in_dim = info_dict['hid_dim']
-            out_dim = info_dict['out_dim'] if (i == info_dict['cls_layers'] - 1) else info_dict['hid_dim']
-            act = False if i == (info_dict['cls_layers'] - 1) else True
-            bn = False if i == (info_dict['cls_layers'] - 1) else info_dict['bn']
-            self.classifier.append(LinearBlock(in_dim, out_dim, info_dict['dropout'], bn=bn, act=act))
-
-    def forward(self, graph, feat):
-        h = feat
-        for i, layer in enumerate(self.enc):
-            h = layer(graph, h)
-        for i, layer in enumerate(self.classifier):
-            h = layer(h)
-
-        return h
-
-    def reset_param(self):
-        for name, module in self.enc.named_children():
-            if module._get_name() == 'SAGEBlock':
-                module.reset_parameters()
-
-
 class SAGE(nn.Module):
     def __init__(self, info_dict):
         super(SAGE, self).__init__()
@@ -164,35 +121,6 @@ class GCN(nn.Module):
         for name, module in self.enc.named_children():
             if module._get_name() == 'GCNBlock':
                 module.reset_parameters()
-
-
-class GCNMLP(nn.Module):
-    def __init__(self, info_dict):
-        super().__init__()
-        self.info_dict = info_dict
-        self.enc = nn.ModuleList()
-        self.classifier = nn.ModuleList()
-        for i in range(info_dict['n_layers']):
-            in_dim = info_dict['in_dim'] if i == 0 else info_dict['hid_dim']
-            out_dim = info_dict['hid_dim']
-            act = True
-            bn = False if i == (info_dict['n_layers'] - 1) else info_dict['bn']
-            self.enc.append(GCNBlock(in_dim, out_dim, info_dict['dropout'], bn=bn, act=act))
-
-        for i in range(info_dict['cls_layers']):
-            in_dim = info_dict['hid_dim']
-            out_dim = info_dict['out_dim'] if (i == info_dict['cls_layers'] - 1) else info_dict['hid_dim']
-            act = False if i == (info_dict['cls_layers'] - 1) else True
-            bn = False if i == (info_dict['cls_layers'] - 1) else info_dict['bn']
-            self.classifier.append(LinearBlock(in_dim, out_dim, info_dict['dropout'], bn=bn, act=act))
-
-    def forward(self, graph, feat):
-        h = feat
-        for i, layer in enumerate(self.enc):
-            h = layer(graph, h)
-        for i, layer in enumerate(self.classifier):
-            h = layer(h)
-        return h
 
 
 class GAT(nn.Module):
@@ -255,9 +183,6 @@ class JKNet(nn.Module):
             feat_lst.append(h)
         h = torch.cat(feat_lst, dim=-1)
 
-        # graph.ndata['h'] = h
-        # graph.update_all(fn.copy_u('h', 'm'), fn.sum('m', 'h'))
-        # h = graph.ndata['h']
         h = self.classifier(h)
         return h
 

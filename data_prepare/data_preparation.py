@@ -5,19 +5,9 @@ from dgl.data import AmazonCoBuyPhotoDataset
 from dgl.data import CoauthorCSDataset
 from dgl.data import CoauthorPhysicsDataset
 from dgl.data import citegrh
-from dgl.data import RedditDataset
 from ogb.nodeproppred import DglNodePropPredDataset, Evaluator
 import torch
 import random
-
-
-def inductive_split(g):
-    """Split the graph into training graph, validation graph, and test graph by training
-    and validation masks.  Suitable for inductive models."""
-    train_g = g.subgraph(g.ndata['train_mask'])
-    val_g = g.subgraph(g.ndata['train_mask'] | g.ndata['val_mask'])
-    test_g = g
-    return train_g, val_g, test_g
 
 
 def load_CoAuthor(db, db_dir):
@@ -42,13 +32,13 @@ def load_AMZCoBuy(db, db_dir):
     return dataset
 
 
-def load_citation(db):
+def load_citation(db, db_dir):
     if db == 'cora':
-        return citegrh.load_cora()
+        return citegrh.load_cora(db_dir)
     elif db == 'citeseer':
-        return citegrh.load_citeseer()
+        return citegrh.load_citeseer(db_dir)
     elif db == 'pubmed':
-        return citegrh.load_pubmed()
+        return citegrh.load_pubmed(db_dir)
     else:
         raise ValueError('Unknown dataset: {}'.format(db))
 
@@ -58,8 +48,8 @@ def load_ogb(db, db_dir):
     return dataset
 
 
-def citation_prep(db):
-    data = load_citation(db)
+def citation_prep(db, db_dir):
+    data = load_citation(db, db_dir)
     g = data[0]
     g = dgl.remove_self_loop(g)
     g = dgl.add_self_loop(g)
@@ -97,19 +87,8 @@ def ogb_prep(db, db_dir):
     split_idx = dataset.get_idx_split()
     train_idx, valid_idx, test_idx = split_idx["train"], split_idx["valid"], split_idx["test"]
 
-    # the original graph is a directional graph, we should convert it to a bi-directional graph
+    # the original graph is a directional graph, we should convert it into a bi-directional graph
     graph, label = dataset[0]
-
-    # region my code to add reverse edges
-
-    # srcs, dsts = graph.all_edges()
-    # ori_edges = set(list(zip(srcs.numpy().tolist(), dsts.numpy().tolist())))
-    # rev_edges = set(list(zip(dsts.numpy().tolist(), srcs.numpy().tolist())))
-    # mis_edges = ori_edges.symmetric_difference(rev_edges).difference(ori_edges)
-    # mis_edges = torch.LongTensor(list(zip(*list(mis_edges))))
-    # graph.add_edges(mis_edges[0], mis_edges[1])
-
-    # endregion
 
     # region official code of dgl to add reverse edges, including adding the self-loop
 
@@ -142,25 +121,15 @@ def ogb_prep(db, db_dir):
     return graph, info_dict
 
 
-def reddit_prep():
-    data = RedditDataset(self_loop=True)
-    g = data[0]
-    info_dict = {'in_dim': g.ndata['feat'].shape[1],
-                 'out_dim': data.num_classes, }
-    return g, info_dict
-
-
 def data_prep(db, db_dir=None):
     small_graph = ['cora', 'citeseer', 'pubmed']
     amz_graph = ['amz-computer', 'amz-photo']
     coauthor_graph = ['co-cs', 'co-phy']
     ogb_graph = ['ogbn-arxiv', 'ogbn-products', 'ogbn-papers100M', 'ogbn-mag']
     if db in small_graph:
-        g, info_dict = citation_prep(db)
+        g, info_dict = citation_prep(db, db_dir)
     elif db in ogb_graph:
         g, info_dict = ogb_prep(db, db_dir)
-    elif db == 'reddit':
-        g, info_dict = reddit_prep()
     elif db in amz_graph:
         g, info_dict = amz_prep(db, db_dir)
     elif db in coauthor_graph:
@@ -181,21 +150,16 @@ def set_seed_and_split(g, seed, splitstr):
     sp_ratio = splitstr.split('-')
     sp_ratio = [float(r) for r in sp_ratio]
     num_nodes = g.num_nodes()
-    if len(sp_ratio) == 1:
-        # randomly pick the given number of instances from each class to build the training set
+    # split the dataset by the given tr-val ratio
+    randperm_ind = np.random.permutation(num_nodes)
+    tr_end_ind = int(num_nodes * sp_ratio[0])
+    val_end_ind = int(num_nodes * sum(sp_ratio))
+    split_ind = np.split(randperm_ind, [tr_end_ind, val_end_ind])
 
-        pass
-    else:
-        # split the dataset by the given tr-val ratio
-        randperm_ind = np.random.permutation(num_nodes)
-        tr_end_ind = int(num_nodes * sp_ratio[0])
-        val_end_ind = int(num_nodes * sum(sp_ratio))
-        split_ind = np.split(randperm_ind, [tr_end_ind, val_end_ind])
-
-        g.ndata['train_mask'] = torch.BoolTensor([False] * g.num_nodes())
-        g.ndata['val_mask'] = torch.BoolTensor([False] * g.num_nodes())
-        g.ndata['test_mask'] = torch.BoolTensor([False] * g.num_nodes())
-        g.ndata['train_mask'][torch.LongTensor(split_ind[0])] = True
-        g.ndata['val_mask'][torch.LongTensor(split_ind[1])] = True
-        g.ndata['test_mask'][torch.LongTensor(split_ind[2])] = True
+    g.ndata['train_mask'] = torch.BoolTensor([False] * g.num_nodes())
+    g.ndata['val_mask'] = torch.BoolTensor([False] * g.num_nodes())
+    g.ndata['test_mask'] = torch.BoolTensor([False] * g.num_nodes())
+    g.ndata['train_mask'][torch.LongTensor(split_ind[0])] = True
+    g.ndata['val_mask'][torch.LongTensor(split_ind[1])] = True
+    g.ndata['test_mask'][torch.LongTensor(split_ind[2])] = True
     return g
