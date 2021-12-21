@@ -125,7 +125,7 @@ def data_prep(db, db_dir=None):
     small_graph = ['cora', 'citeseer', 'pubmed']
     amz_graph = ['amz-computer', 'amz-photo']
     coauthor_graph = ['co-cs', 'co-phy']
-    ogb_graph = ['ogbn-arxiv', 'ogbn-products', 'ogbn-papers100M', 'ogbn-mag']
+    ogb_graph = ['ogbn-arxiv']
     if db in small_graph:
         g, info_dict = citation_prep(db, db_dir)
     elif db in ogb_graph:

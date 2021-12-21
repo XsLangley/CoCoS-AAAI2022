@@ -49,28 +49,28 @@ def main(args):
     elif args.model == 'GCNCoCoS':
         info_dict.update({'backbone': 'GCN'})
         model = models_ogb.GCN(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.GCN(info_dict)
-        Dis = model = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.ProgPosContraTrainer(g, model, info_dict, Dis=Dis)
+        Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'GATCoCoS':
         info_dict.update({'backbone': 'GAT'})
         model = models_ogb.GAT(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.GAT(info_dict)
-        Dis = model = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.ProgPosContraTrainer(g, model, info_dict, Dis=Dis)
+        Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'SAGECoCoS':
         info_dict.update({'backbone': 'SAGE'})
         model = models_ogb.SAGE(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.SAGE(info_dict)
-        Dis = model = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.ProgPosContraTrainer(g, model, info_dict, Dis=Dis)
+        Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'JKNetCoCoS':
         info_dict.update({'backbone': 'JKNet'})
         model = models_ogb.JKNet(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.JKNet(info_dict)
-        Dis = model = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.ProgPosContraTrainer(g, model, info_dict, Dis=Dis)
+        Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'SGCCoCoS':
         info_dict.update({'backbone': 'SGC'})
         model = models_ogb.SGC(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.SGC(info_dict)
-        Dis = model = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.ProgPosContraTrainer(g, model, info_dict, Dis=Dis)
+        Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     else:
         raise ValueError("unknown model: {}".format(args.model))
 
@@ -80,9 +80,9 @@ def main(args):
     print(model)
     print(info_dict)
     print('\nSTART TRAINING\n')
-    val_acc, tt_acc, val_acc_fin, tt_acc_fin, microf1, macrof1, epoch_tc = trainer.train()
+    val_acc, tt_acc, val_acc_fin, tt_acc_fin, microf1, macrof1 = trainer.train()
 
-    suffix = 'ori' if args.split == 'none' else '_'.join(args.split.split('-'))
+    suffix = 'ori' if args.split == 'None' else '_'.join(args.split.split('-'))
     save_root = os.path.join('exp', '{}_{}'.format(args.model, suffix))
     if not os.path.exists(save_root):
         os.makedirs(save_root)
@@ -97,28 +97,18 @@ def main(args):
             info_dict.pop('src_root')
         if NEED_TITLE:
             title = [str(k) for k in info_dict.keys()]
-            title.insert(0, 'per_epoch_time_cost')
-            title.insert(0, 'Macro-F1')
-            title.insert(0, 'Micro-F1')
-            title.insert(0, 'val_acc_fin')
-            title.insert(0, 'tt_acc_fin')
-            title.insert(0, 'val_acc')
-            title.insert(0, 'tt_acc')
+            metrics_list = ['tt_acc', 'val_acc', 'tt_acc_fin', 'val_acc_fin', 'Micro-F1', 'Macro-F1']
+            title = metrics_list + title
             f.write(','.join(title) + '\n')
         result = [str(s) for s in list(info_dict.values())]
-        result.insert(0, str(epoch_tc))
-        result.insert(0, str(macrof1))
-        result.insert(0, str(microf1))
-        result.insert(0, str(val_acc_fin))
-        result.insert(0, str(tt_acc_fin))
-        result.insert(0, str(val_acc))
-        result.insert(0, str(tt_acc))
+        metric_result = [str(tt_acc), str(val_acc), str(tt_acc_fin), str(val_acc_fin), str(microf1), str(macrof1)]
+        result = metric_result + result
         f.write(','.join(result) + '\n')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='the main program to run experiments on small datasets')
-    parser.add_argument("--model", type=str, default='GCN',
+    parser.add_argument("--model", type=str, default='GCNCoCoS',
                         help="model name")
     parser.add_argument("--dataset", type=str, default='cora',
                         help="the dataset for the experiment")
@@ -152,9 +142,9 @@ if __name__ == '__main__':
                         help="the number of attention heads, only for GAT")
     parser.add_argument("--agg_type", type=str, default="gcn",
                         help="the aggregation type of GraphSAGE")
-    parser.add_argument("--gpu", type=int, default=-1,
+    parser.add_argument("--gpu", type=int, default=0,
                         help="specify the gpu index, set -1 to train on cpu")
-    parser.add_argument("--lr", type=float, default=0.01,
+    parser.add_argument("--lr", type=float, default=0.05,
                         help="the learning rate")
     parser.add_argument("--weight_decay", type=float, default=5e-4,
                         help="the weight decay for optimizer")

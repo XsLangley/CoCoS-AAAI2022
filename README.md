@@ -8,5 +8,6 @@ The code is under preparation. The scripts in the current repo may not run prope
 - [x] the entrance run script for results reproduction
 - [x] the main program for one experiment (only for small datasets, such as Cora, Citeseer and Pubmed)
 - [x] data preparation script/ data preprocessing program
-- [ ] trainers for each model
+- [x] trainers for each model (only for small datasets, such as Cora, Citeseer and Pubmed)
 - [ ] other utilizations
+- [ ] Clean up
