@@ -1,14 +1,16 @@
+'''
+The models in this script is for big dataset, i.e., Ogbn-arxiv.
+'''
 import torch
 from torch.nn import functional as F
-import dgl
-import os
 from torch import nn
-from dgl.utils import expand_as_pair, check_eq_shape
+from dgl.utils import expand_as_pair
 from dgl.ops import edge_softmax
 from dgl import function as fn
 from dgl.nn.pytorch import SAGEConv
 from dgl.nn.pytorch import GraphConv
 from dgl.nn.pytorch import SGConv
+
 
 class LinearBlock(nn.Module):
     def __init__(self, in_dim, hid_dim, dropout=0, bn=False, residual=False, act=True):
@@ -67,82 +69,6 @@ class ElementWiseLinear(nn.Module):
             if self.bias is not None:
                 x = x + self.bias
         return x
-
-
-class SAGEMLP(nn.Module):
-    def __init__(self, info_dict, use_linear=False):
-        super(SAGEMLP, self).__init__()
-        self.classifier = nn.ModuleList()
-
-        self.info_dict = info_dict
-        self.n_layers = info_dict['n_layers']
-        self.n_hidden = info_dict['hid_dim']
-        self.n_classes = info_dict['out_dim']
-        self.use_linear = use_linear
-
-        self.convs = nn.ModuleList()
-        if use_linear:
-            self.linear = nn.ModuleList()
-        self.norms = nn.ModuleList()
-
-        for i in range(info_dict['n_layers']):
-            in_hidden = info_dict['hid_dim'] if i > 0 else info_dict['in_dim']
-            out_hidden = info_dict['hid_dim']
-
-            self.convs.append(SAGEConv(in_hidden, out_hidden, info_dict['agg_type'], bias=False))
-            if use_linear:
-                self.linear.append(nn.Linear(in_hidden, out_hidden, bias=False))
-
-            self.norms.append(nn.BatchNorm1d(out_hidden))
-
-        for i in range(info_dict['cls_layers']):
-            in_dim = info_dict['hid_dim']
-            out_dim = info_dict['out_dim'] if (i == info_dict['cls_layers'] - 1) else info_dict['hid_dim']
-            act = False if i == (info_dict['cls_layers'] - 1) else True
-            bn = False if i == (info_dict['cls_layers'] - 1) else True
-            dropout = 0 if i == (info_dict['cls_layers'] - 1) else info_dict['dropout']
-            self.classifier.append(LinearBlock(in_dim, out_dim, dropout, bn=bn, act=act))
-
-        self.input_drop = nn.Dropout(min(0.1, info_dict['dropout']))
-        self.dropout = nn.Dropout(info_dict['dropout'])
-        self.activation = F.relu
-
-    def forward(self, graph, feat):
-        h = feat
-        h = self.input_drop(h)
-        for i in range(self.n_layers):
-            conv = self.convs[i](graph, h)
-
-            if self.use_linear:
-                linear = self.linear[i](h)
-                h = conv + linear
-            else:
-                h = conv
-
-            h = self.norms[i](h)
-            h = self.activation(h)
-            h = self.dropout(h)
-
-        for i, layer in enumerate(self.classifier):
-            h = layer(h)
-
-        return h
-
-    def reset_param(self):
-        for name, module in self.convs.named_children():
-            if module._get_name() == 'SAGEConv':
-                module.reset_parameters()
-        for name, module in self.norms.named_children():
-            if module._get_name() == 'BatchNorm1d':
-                module.reset_parameters()
-        for name, module in self.classifier.named_children():
-            if module._get_name() == 'LinearBlock':
-                module.reset_parameters()
-
-        if self.use_linear:
-            for name, module in self.linear.named_children():
-                if module._get_name() =='Linear':
-                    module.reset_parameters()
 
 
 class SAGE(nn.Module):
@@ -533,10 +459,6 @@ class JKNet(nn.Module):
             feat_lst.append(h)
         h = torch.cat(feat_lst, dim=-1)
 
-        # graph.ndata['h'] = h
-        # graph.update_all(fn.copy_u('h', 'm'), fn.sum('m', 'h'))
-        # h = graph.ndata['h']
-        # h = self.classifier(h)
         for i, layer in enumerate(self.classifier):
             h = layer(h)
         return h

@@ -50,27 +50,32 @@ def main(args):
         info_dict.update({'backbone': 'GCN'})
         model = models_ogb.GCN(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.GCN(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+            else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'GATCoCoS':
         info_dict.update({'backbone': 'GAT'})
         model = models_ogb.GAT(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.GAT(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+            else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'SAGECoCoS':
         info_dict.update({'backbone': 'SAGE'})
         model = models_ogb.SAGE(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.SAGE(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+            else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'JKNetCoCoS':
         info_dict.update({'backbone': 'JKNet'})
         model = models_ogb.JKNet(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.JKNet(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+            else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'SGCCoCoS':
         info_dict.update({'backbone': 'SGC'})
         model = models_ogb.SGC(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.SGC(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
+        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+            else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     else:
         raise ValueError("unknown model: {}".format(args.model))
 
@@ -82,6 +87,7 @@ def main(args):
     print('\nSTART TRAINING\n')
     val_acc, tt_acc, val_acc_fin, tt_acc_fin, microf1, macrof1 = trainer.train()
 
+    # save experimental results in the local storage
     suffix = 'ori' if args.split == 'None' else '_'.join(args.split.split('-'))
     save_root = os.path.join('exp', '{}_{}'.format(args.model, suffix))
     if not os.path.exists(save_root):
@@ -114,10 +120,10 @@ if __name__ == '__main__':
                         help="the dataset for the experiment")
     parser.add_argument("--pretr_state", type=str, default='val',
                         help="the version of the pretraining model")
-    parser.add_argument("--n_epochs", type=int, default=200,
+    parser.add_argument("--n_epochs", type=int, default=300,
                         help="the number of training epochs")
-    parser.add_argument("--n_step_epochs", type=int, default=10,
-                        help="the interval (epoch) to override/ update the estimated labels, corresponding to hyperparameter \eta")
+    parser.add_argument("--eta", type=int, default=10,
+                        help="the interval (epoch) to override/ update the estimated labels")
     parser.add_argument("--n_cls_pershuf", type=int, default=4,
                         help="the number of classes for each shuffling operation, only works for Ogbn-arxiv")
     parser.add_argument("--n_layers", type=int, default=2,
@@ -144,7 +150,7 @@ if __name__ == '__main__':
                         help="the aggregation type of GraphSAGE")
     parser.add_argument("--gpu", type=int, default=-1,
                         help="specify the gpu index, set -1 to train on cpu")
-    parser.add_argument("--lr", type=float, default=0.05,
+    parser.add_argument("--lr", type=float, default=0.01,
                         help="the learning rate")
     parser.add_argument("--weight_decay", type=float, default=5e-4,
                         help="the weight decay for optimizer")
@@ -154,8 +160,8 @@ if __name__ == '__main__':
                         help="the samples split settings, should be in the format of "
                              "{training set ratio}-{validation set ratio};"
                              "set None to use the standard train-val-test split of the dataset")
-    parser.add_argument("--wctr", type=float, default=0.6,
-                        help="coefficient for the contrastive loss, corresponding to alpha")
+    parser.add_argument("--alpha", type=float, default=0.6,
+                        help="coefficient for the contrastive loss")
     parser.add_argument("--cls_mode", type=str, default='both',
                         help="the type of the classification loss")
     parser.add_argument("--ctr_mode", type=str, default='FS',

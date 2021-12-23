@@ -1,3 +1,7 @@
+'''
+The models in this script is for small dataset, i.e., Cora, Citeseer, Pubmed, Amazon-computer, Amazon-photos,
+Coauthor-CS and Coauthor-Physics.
+'''
 import torch
 from torch.nn import functional as F
 from torch import nn
@@ -132,7 +136,6 @@ class GAT(nn.Module):
         self.activation = F.relu
 
         for l in range(info_dict['n_layers']):
-            # due to multi-head, the in_dim = num_hidden * num_heads
             in_dim = info_dict['in_dim'] if l == 0 else info_dict['hid_dim'] * info_dict['num_heads']
             out_dim = info_dict['out_dim'] if l == info_dict['n_layers'] - 1 else info_dict['hid_dim']
             act = nn.Identity() if l == (info_dict['n_layers'] - 1) else self.activation

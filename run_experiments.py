@@ -59,15 +59,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Reproduce the reported results of the paper. Repeatedly run a model.')
     parser.add_argument("--model", type=str, default='GCN',
                         help="model name")
-    parser.add_argument("--round", type=int, default=1, help='number of rounds to repeat')
+    parser.add_argument("--round", type=int, default=10, help='number of rounds to repeat')
     parser.add_argument("--dataset", type=str, default='cora',
                         help="the dataset for the experiment")
     parser.add_argument("--pretr_state", type=str, default='val',
                         help="the version of the pretraining model")
-    parser.add_argument("--n_epochs", type=int, default=200,
+    parser.add_argument("--n_epochs", type=int, default=300,
                         help="the number of training epochs")
-    parser.add_argument("--n_step_epochs", type=int, default=10,
-                        help="the interval (epoch) to override/ update the estimated labels, corresponding to hyperparameter \eta")
+    parser.add_argument("--eta", type=int, default=10,
+                        help="the interval (epoch) to override/ update the estimated labels")
     parser.add_argument("--n_cls_pershuf", type=int, default=4,
                         help="the number of classes for each shuffling operation, only works for Ogbn-arxiv")
     parser.add_argument("--n_layers", type=int, default=2,
@@ -94,7 +94,7 @@ if __name__ == '__main__':
                         help="the aggregation type of GraphSAGE")
     parser.add_argument("--gpu", type=int, default=-1,
                         help="specify the gpu index, set -1 to train on cpu")
-    parser.add_argument("--lr", type=float, default=0.05,
+    parser.add_argument("--lr", type=float, default=0.01,
                         help="the learning rate")
     parser.add_argument("--weight_decay", type=float, default=5e-4,
                         help="the weight decay for optimizer")
@@ -102,8 +102,8 @@ if __name__ == '__main__':
                         help="the samples split settings, should be in the format of "
                              "{training set ratio}-{validation set ratio};"
                              "set None to use the standard train-val-test split of the dataset")
-    parser.add_argument("--wctr", type=float, default=0.6,
-                        help="coefficient for the contrastive loss, corresponding to alpha")
+    parser.add_argument("--alpha", type=float, default=0.6,
+                        help="coefficient for the contrastive loss")
     parser.add_argument("--cls_mode", type=str, default='both',
                         help="the type of the classification loss")
     parser.add_argument("--ctr_mode", type=str, default='FS',
