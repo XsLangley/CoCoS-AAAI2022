@@ -44,7 +44,7 @@ The paper will be available soon on AAAI library.
 ```
 CoCoS   
 │   main.py  
-│   maodels_ogb.py  
+│   models_ogb.py  
 │   models_small.py    
 │   README.md
 │   run_experiments.py
