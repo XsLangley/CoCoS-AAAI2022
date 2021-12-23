@@ -11,3 +11,8 @@ The code is under preparation. The scripts in the current repo may not run prope
 - [x] trainers for each model (only for small datasets, such as Cora, Citeseer and Pubmed)
 - [ ] other utilizations
 - [ ] Clean up
+
+## Requirements
+
+- DGL v0.6 (or newer versions)
+- PyTorch v1.6 (or newer versions, but v1.10. There are some issues on v1.10 when loading the graph dataset.)

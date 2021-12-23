@@ -37,19 +37,20 @@ def main(args):
                   "--hid_dim {hid_dim} --emb_hid_dim {ehd} " \
                   "--num_heads {nh} --agg_type {at} " \
                   "--gpu {gpu} --lr {lr} --weight_decay {wd} --split {spt} " \
-                  "--wctr {wctr} --cls_mode {clsm} --ctr_mode {ctrm} -bn {bn}" \
+                  "--wctr {wctr} --cls_mode {clsm} --ctr_mode {ctrm} " \
                   "--dropout {dp} --attn_drop {adp} " \
-                  "{idp} {edp} ".format(
-            script=main_script, m=model, seed=r, db=dataset, ptrst=pretr_states,
+                  "{idp} {edp} {bn} ".format(
+            m=model, seed=r, db=dataset, ptrst=pretr_states,
             ep=n_epochs, nsep=n_step_epochs, ncps=n_cls_pershuf,
             nl=n_layers, cl=cls_layers, dl=dis_layers,
             hid_dim=hid_dim, ehd=emb_hid_dim,
             nh=nh,  at=agg_type,
             gpu=gpu, lr=lr, wd=wd, spt=split,
-            wctr=wctr, clsm=cls_mode, ctrm=ctr_mode, bn=bn,
+            wctr=wctr, clsm=cls_mode, ctrm=ctr_mode,
             dp=dropout, adp=adp,
             idp='--input_drop {}'.format(idp) if dataset == 'ogbn-arxiv' else '',
             edp='--edge_drop {}'.format(edp) if dataset == 'ogbn-arxiv' else '',
+            bn='--bn' if bn else '',
             )
         os.system(run_cmd)
 
@@ -58,12 +59,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Reproduce the reported results of the paper. Repeatedly run a model.')
     parser.add_argument("--model", type=str, default='GCN',
                         help="model name")
-    parser.add_argument("--round", type=int, default=10, help='number of rounds to repeat')
+    parser.add_argument("--round", type=int, default=1, help='number of rounds to repeat')
     parser.add_argument("--dataset", type=str, default='cora',
                         help="the dataset for the experiment")
     parser.add_argument("--pretr_state", type=str, default='val',
                         help="the version of the pretraining model")
-    parser.add_argument("--n_epochs", type=int, default=300,
+    parser.add_argument("--n_epochs", type=int, default=200,
                         help="the number of training epochs")
     parser.add_argument("--n_step_epochs", type=int, default=10,
                         help="the interval (epoch) to override/ update the estimated labels, corresponding to hyperparameter \eta")
@@ -75,9 +76,9 @@ if __name__ == '__main__':
                         help="the number of MLP classifier layers, if any")
     parser.add_argument("--dis_layers", type=int, default=2,
                         help="the number of MLP discriminator layers, only for CoCoS-enhanced models")
-    parser.add_argument("--hid_dim", type=str, default='16',
+    parser.add_argument("--hid_dim", type=int, default=16,
                         help="the hidden dimension of hidden layers in the backbone model")
-    parser.add_argument("--emb_hid_dim", type=str, default='64',
+    parser.add_argument("--emb_hid_dim", type=int, default=64,
                         help="the hidden dimension of the hidden layers in the MLP discriminator")
     parser.add_argument("--dropout", type=float, default=0.6,
                         help="dropout rate")
@@ -93,7 +94,7 @@ if __name__ == '__main__':
                         help="the aggregation type of GraphSAGE")
     parser.add_argument("--gpu", type=int, default=-1,
                         help="specify the gpu index, set -1 to train on cpu")
-    parser.add_argument("--lr", type=str, default='0.005',
+    parser.add_argument("--lr", type=float, default=0.05,
                         help="the learning rate")
     parser.add_argument("--weight_decay", type=float, default=5e-4,
                         help="the weight decay for optimizer")

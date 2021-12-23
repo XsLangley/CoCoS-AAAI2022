@@ -108,13 +108,13 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='the main program to run experiments on small datasets')
-    parser.add_argument("--model", type=str, default='GCNCoCoS',
+    parser.add_argument("--model", type=str, default='GCN',
                         help="model name")
     parser.add_argument("--dataset", type=str, default='cora',
                         help="the dataset for the experiment")
     parser.add_argument("--pretr_state", type=str, default='val',
                         help="the version of the pretraining model")
-    parser.add_argument("--n_epochs", type=int, default=300,
+    parser.add_argument("--n_epochs", type=int, default=200,
                         help="the number of training epochs")
     parser.add_argument("--n_step_epochs", type=int, default=10,
                         help="the interval (epoch) to override/ update the estimated labels, corresponding to hyperparameter \eta")
@@ -142,7 +142,7 @@ if __name__ == '__main__':
                         help="the number of attention heads, only for GAT")
     parser.add_argument("--agg_type", type=str, default="gcn",
                         help="the aggregation type of GraphSAGE")
-    parser.add_argument("--gpu", type=int, default=0,
+    parser.add_argument("--gpu", type=int, default=-1,
                         help="specify the gpu index, set -1 to train on cpu")
     parser.add_argument("--lr", type=float, default=0.05,
                         help="the learning rate")
