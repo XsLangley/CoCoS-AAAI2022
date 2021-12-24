@@ -31,7 +31,7 @@ A brief introduction of the algorithm is illustrated in the following.
 
 ### Methodology
 
-<p align="center"><img alt='CoCoS framework' width="100%" src="assets/CoCoS_framework.png" /></p>
+<p align="center"><img alt='CoCoS framework' width="80%" src="assets/CoCoS_framework.png" /></p>
 
 
 ## Progress
