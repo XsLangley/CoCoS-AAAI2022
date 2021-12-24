@@ -107,11 +107,13 @@ paper).
 
 CoCoS is an GNN enhancement techniques, which will be applied to a pretrained GNN model.
 Let's take GCN on Cora as an example, steps and commands are as follows:
-1. Pre-train GCN on Cora: `python --dataset cora --model GCN`, which will create a folder `GCN_ori` under `./exp/` to store
-all experimental results, including hyperparameters, accuracies and model parameters.
-2. Enhance GCN with CoCoS: `python --dataset cora --model GCNCoCoS`, which will create a folder `GCNCoCoS_ori` under 
-`./exp/` to store all experimental results, including hyperparameters, accuracies and model parameters.
+1. Pre-train GCN on Cora: `python --dataset cora --model GCN`.
+2. Enhance GCN with CoCoS: `python --dataset cora --model GCNCoCoS`.
 
+Step 1 will will create a folder `GCNCoCoS_ori` under `./exp/` to store all experimental results, 
+including hyperparameters, accuracies and model parameters.
+Step 2 will create a folder `GCN_ori` under `./exp/` to store all experimental results, 
+including hyperparameters, accuracies and model parameters.
 
 ### Directory Tree
 ```
