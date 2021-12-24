@@ -1,6 +1,6 @@
 # CoCoS: Contrastive Context Sharing
 
-<p align="left"><img alt='A CoCoS exmaple' width="60%" src="assets/CoCoS_node_classification_example.png" /></p>
+<p align="center"><img alt='A CoCoS exmaple' width="60%" src="assets/CoCoS_node_classification_example.png" /></p>
 
 This is the code repository of **AAAI 2022** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled Data via Contrastive Context Sharing'.
 CoCos is an enhancement technique for GNN-based models.
