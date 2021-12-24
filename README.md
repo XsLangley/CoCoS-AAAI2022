@@ -5,7 +5,7 @@
 This is the code repository of **AAAI 2022** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled Data via Contrastive Context Sharing'.
 CoCos is an enhancement technique for GNN-based models.
 It aims to improve GNN's representation capacity and performance when labeled nodes are scarce in a given dataset.
-Then main task is for node classifications.
+The main task is for node classifications.
 The information of the corresponding paper is as follows:
 
 > Authors: Siyue Xie, Da Sun Handason Tam and Wing Cheong Lau
@@ -24,6 +24,15 @@ The information of the corresponding paper is as follows:
 
 The paper will be available soon on AAAI library.
 A brief introduction of the algorithm is illustrated in the following.
+
+## Brief Introduction on CoCoS
+
+### Motivation
+
+### Methodology
+
+<p align="center"><img alt='CoCoS framework' width="60%" src="assets/CoCoS_framework.png" /></p>
+
 
 ## Progress
 - [x] the entrance run script for results reproduction
@@ -156,7 +165,7 @@ CoCoS
     Default: `FS`.
     - --bn: a flag to indicate whether to use batch normalization for training.
 
-- `run_experiments`: a script to repeatedly run experiments using the same set of hyperparameters but with different 
+- `run_experiments.py`: a script to repeatedly run experiments using the same set of hyperparameters but with different 
 random seed, which is for experiments reproduction.
 Optional arguments are the same as `main.py`, but remove `--seed` argument and add an additional argument:
     - --round: specify how many rounds you would like to repeat the experiments.
@@ -179,3 +188,7 @@ Some modules are adapted from [here](https://github.com/Espylapiza/dgl/tree/mast
 Will be created in the first time to run the experiment.
 
 - `./exp`: the directory to hold all experimental results.
+
+### Datasets
+
+
