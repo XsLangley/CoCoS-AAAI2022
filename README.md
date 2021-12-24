@@ -1,8 +1,11 @@
 # CoCoS: Contrastive Context Sharing
 
+<p align="left"><img alt='A CoCoS exmaple' width="100%" src="assets/CoCoS_node_classification_example.pdf" /></p>
+
 This is the code repository of **AAAI 2022** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled Data via Contrastive Context Sharing'.
 CoCos is an enhancement technique for GNN-based models.
 It aims to improve GNN's representation capacity and performance when labeled nodes are scarce in a given dataset.
+Then main task is for node classifications.
 The information of the corresponding paper is as follows:
 
 > Authors: Siyue Xie, Da Sun Handason Tam and Wing Cheong Lau
@@ -20,6 +23,7 @@ The information of the corresponding paper is as follows:
 >Extensive experiments show that CoCoS considerably enhances typical GNN models, especially when labeled data are sparse in a graph, and achieves state-of-the-art or competitive results in real-world public datasets. 
 
 The paper will be available soon on AAAI library.
+A brief introduction of the algorithm is illustrated in the following.
 
 ## Progress
 - [x] the entrance run script for results reproduction
@@ -39,6 +43,16 @@ The paper will be available soon on AAAI library.
 - [OGB](https://ogb.stanford.edu/docs/home/)
 
 ## Instructions
+
+### Quick Start: Run GCN and Enhance GCN with CoCoS
+
+CoCoS is an GNN enhancement techniques, which will be applied to a pretrained GNN model.
+Let's take GCN on Cora as an example, steps and commands are as follows:
+1. Pre-train GCN on Cora: `python --dataset cora --model GCN`, which will create a folder `GCN_ori` under `./exp/` to store
+all experimental results, including hyperparameters, accuracies and model parameters.
+2. Enhance GCN with CoCoS: `python --dataset cora --model GCNCoCoS`, which will create a folder `GCNCoCoS_ori` under 
+`./exp/` to store all experimental results, including hyperparameters, accuracies and model parameters.
+
 
 ### Directory Tree
 ```
