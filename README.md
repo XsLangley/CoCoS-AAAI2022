@@ -65,4 +65,103 @@ CoCoS
 
 ### Descriptions of Each File/ Directory
 
-Will be added soon.
+- `main.py`: the main program to run an experiment. Optional arguments:
+    - --model: the name of the model for training. 
+    Currently support baseline GNN models include 'GCN', 'GAT', 'JKNet' and 'SGC'. 
+    For CoCoS-enhanced models, add an suffix 'CoCoS' to each baseline model's name, e.g., 'GCNCoCoS'.
+    Default: `GCN`.
+    - --dataset: the name of datasets.
+    Options include 'cora' (Cora), 'citeseer' (Citeseer), 'pubmed' (Pubmed), 'amz-computer' (Amazon-Computer),
+    'amz-photo' (Amazon-Photos), 'co-cs' (Coauthor-CS), 'co-phy' (Coauthor-Physics), 'ogbn-arxiv' (Ogbn-arxiv).
+    Default: `cora`. 
+    - --pretr_state: the version of pretrained GNN model (only for CoCoS-enhanced models). 
+    In the pretrain stage, we will store two versions of the pretrained model, 
+    one is the version with the best validation accuracy, the other is the version we stored
+    after the last training epoch.
+    Use 'val' and 'fin' to specify these two version respectively.
+    Default: `val`.
+    - --n_epochs: the total number of training epochs.
+    Default: `300`.
+    - --eta: the number of epochs to override/ update the estimated labels for each unlabeled node, corresponding to 
+    the hyperparameter &eta; in the paper.
+    Only for CoCoS-enhanced model.
+    Default: `10`.
+    - --n_cls_pershuf: the number of classes for each context shuffling operation (only for experiments on 
+    Ogbn-arxiv dataset).
+    Only for CoCoS-enhanced model.
+    Default: `4`.
+    - --n_layers: the number of layers of the specified model.
+    Default: `2`.
+    - --cls_layers: the number of layers of MLP classifier (only for JKNet).
+    Default: `1`.
+    - --dis_layers: the number of layers of the discriminator for contrastive learning.
+    Default: `2`.
+    Only for CoCoS-enhanced model.
+    - --hid_dim: the hidden dimension of each GNN layer.
+    Default: `16`.
+    - emb_hid_dim: the hidden dimension of each layer in the discriminator.
+    Default: `32`.
+    Only for CoCoS-enhanced model.
+    - --dropout: dropout rate.
+    Default: `0.6`.
+    - --input_drop: the input dropout rate, only for models for Ogbn-arxiv.
+    Default: `0.25`.
+    - --attn_drop: the attention dropout rate, only for GAT.
+    Default: `0.6`.
+    - --edge_drop: the edge dropout rate, only for GAT in Ogbn-arxiv.
+    Default: `0.3`.
+    - --num_heads: the number of attention heads for GAT.
+    Default: `8`.
+    - --agg_type: the aggregation type of each GraphSAGE layer (`sageconv` module in DGL).
+    Default: `gcn`.
+    - --gpu: specify the GPU index for model training.
+    Use `-1` for CPU training.
+    Default: `-1`.
+    - --lr: the learning rate.
+    Default: `0.01`.
+    - --weight_decay: the weight decay for the optimizer.
+    Default: `5e-4`.
+    - --seed: the random seed for results reproduction.
+    Default: `0`.
+    - --split: the train-validation split for the experiment.
+    The format should be {tr}-{val}, e.g., 0.6-0.2, which means 60\% of data (nodes) for training, 20\% for
+    validation and remaining 20\% data for testing.
+    Use `None` for the standard split.
+    Default: `None`.
+    - --alpha: the coefficient for the contrastive loss part, corresponding to the hyperparamter &alpha; in the paper.
+    Only for CoCoS-enhanced model.
+    Default: `0.6`.
+    - --cls_mode: the version of classification loss.
+    Options include: `raw`, `shuf` and `both`.
+    `raw` indicates that the classification loss is computed based on the unshuffled node features.
+    `shuf` indicates that the classification loss is computed based on the shuffled node features.
+    `both` combines the above two modes, which is the version used in the paper.
+    Default: `both`.
+    - --ctr_mode: the type of positive pairs for contrastive learning.
+    Options: `F`, `T`, `M`, `S` or their combinations, e.g., `MS`.
+    Default: `FS`.
+    - --bn: a flag to indicate whether to use batch normalization for training.
+
+- `run_experiments`: a script to repeatedly run experiments using the same set of hyperparameters but with different 
+random seed, which is for experiments reproduction.
+Optional arguments are the same as `main.py`, but remove `--seed` argument and add an additional argument:
+    - --round: specify how many rounds you would like to repeat the experiments.
+    Each round will use the same set of hyperparameters but with different random seed.
+    Default: `10`.
+
+- `trainers.py`: a script includes all required trainers for experiments on different datasets using different mdoels.
+
+- `models_small.py`: a script includes all required models for training on small datasets, i.e., Cora, Citeseer, Pubmed,
+Amazon-computers, Amazon-photos, Coauthor-CS and Coauthor-Physics.
+
+- `models_ogb.py`: a script includes all required models for training on Ogbn-arxiv dataset.
+Some modules are adapted from [here](https://github.com/Espylapiza/dgl/tree/master/examples/pytorch/ogb/ogbn-arxiv). 
+    
+- `utils.py`: other utilizations.
+
+- `./data_prepare/data_preparation.py`: script for data pre-processing and loading.
+
+- `./dataset`: the folder that stores the downloaded dataset.
+Will be created in the first time to run the experiment.
+
+- `./exp`: the directory to hold all experimental results.
