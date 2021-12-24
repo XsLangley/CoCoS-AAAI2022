@@ -22,16 +22,66 @@ The information of the corresponding paper is as follows:
 >CoCoS can be easily extended to a wide range of GNN-based models with little computational overheads. 
 >Extensive experiments show that CoCoS considerably enhances typical GNN models, especially when labeled data are sparse in a graph, and achieves state-of-the-art or competitive results in real-world public datasets. 
 
-The paper will be available soon on AAAI library.
-A brief introduction of the algorithm is illustrated in the following.
+The paper will be available soon on the AAAI library.
 
-## Brief Introduction on CoCoS
+## A Brief Introduction for CoCoS
 
 ### Motivation
+
+The idea is inspired by some observations on experiments.
+For current GNN models under semi-supervised settings, models are usually trained by the supervised classification loss
+that is based only on the information of labeled nodes (as well as its neighborhoods).
+However, when the labeled nodes are very sparse in the graph (which can be true in many real-world scenarios), the 
+nodes that are incorporated in the training can be very limited.
+In other words, the model can only learn knowledge from a small part of available data, while leaving all other data
+idle.
+Such drawbacks limit the learning capacity of GNN models. 
+Some observations, quantitative analyses and detailed explanations refer to our paper.
+To make use of all available data and improve the representation power of current GNN models on 
+sparse-labeled datasets, we propose to enhance the learning capacity by learning from unlabeled nodes.
+
 
 ### Methodology
 
 <p align="center"><img alt='CoCoS framework' width="80%" src="assets/CoCoS_framework.png" /></p>
+
+
+To learn from all available data, our idea is to find a way to correlate the labeled and unlabeled nodes.
+Note that GNN is able to classify a node by looking at both the target node itself as well as the context
+(neighborhood information) of the target node.
+From such a starting point, we argue that GNN is still able to classify a node even if perturbations occur in its 
+neighborhood, as long as the context is still consistent with that before perturbations.
+Here, 'context' refers to an instance's neighborhood information, including node/ edge attributes and the graph topology.
+To introduce perturbations but keep the context consistent, our idea is to shuffle the nodes that within the same 
+class, i.e., intra-class node shuffling.
+(An illustrative example for such an idea can refer to the Figure 2 in our paper.)
+However, for graph learning under semi-supervised settings, only a small proportion of nodes have labels.
+An workaround is to estimate the labels for those unlabeled nodes.
+Therefore, in our method, we will first use a pretrain GNN backbone model to generate the label estimation for each node.
+With these estimated labels, we can apply intra-class shuffling.
+We argue that the graph after such an intra-class shuffling (we call it context-consistent graph) shares the same context with the original graph.
+This helps correlate the labeled and unlabeled nodes, even if they are remote from each other in the graph.
+Also, more nodes can be incorporated into the learning process, which enlarge the domain that the model can learn from.
+In addition, we can draw analogy of such a context sharing scheme to the data augmentation in contrastive learning.
+Therefore, we borrow the ideas from advanced graph contrastive works to further enhance the framework.
+Concretely, we can construct some positive pairs between the context consistent graph and the original graph, and also 
+the nodes within the same class.
+Negative pairs can be constructed across nodes from different class (intra-class shuffling).
+With these positive and negative pairs, we can derive a contrastive loss and include it together with the supervised 
+classification loss for training, so as to enhance the learning capacity of the GNN backbone model.
+
+The steps (refer to the above figure) to apply CoCos can be summarized as follows:
+1. Pretraining stage: select a GNN backbone model (which is going to enhanced by CoCoS) and train it in the target 
+dataset with limited labeled data.
+After training, the GNN backbone model can provide an estimated label for each node in the graph.
+2. Context sharing: with the estimated labels, we apply intra-class shuffling on the given graph, which will generate
+a context-consistent graph.
+3. Contrast: the context-consistent graph can be treated as a data augmentation against the original graph.
+Therefore, we construct some positive paris and negative pairs between the original and the context-consistent graph.
+4. Training: with the contrastive pairs, we can derive the contrastive loss.
+The part of loss will be added to the overall loss together with the supervised classification loss on labeled nodes.
+The model can then be trained through backward-propagation based on the overall loss function (refer to Eq 11 in our 
+paper).
 
 
 ## Progress
@@ -90,12 +140,12 @@ CoCoS
 
 - `main.py`: the main program to run an experiment. Optional arguments:
     - --model: the name of the model for training. 
-    Currently support baseline GNN models include 'GCN', 'GAT', 'JKNet' and 'SGC'. 
-    For CoCoS-enhanced models, add an suffix 'CoCoS' to each baseline model's name, e.g., 'GCNCoCoS'.
+    Currently support baseline GNN models include `GCN`, `GAT`, `SAGE` (GraphSAGE), `JKNet` and `SGC`. 
+    For CoCoS-enhanced models, add an suffix 'CoCoS' to each baseline model's name, e.g., `GCNCoCoS`.
     Default: `GCN`.
     - --dataset: the name of datasets.
-    Options include 'cora' (Cora), 'citeseer' (Citeseer), 'pubmed' (Pubmed), 'amz-computer' (Amazon-Computer),
-    'amz-photo' (Amazon-Photos), 'co-cs' (Coauthor-CS), 'co-phy' (Coauthor-Physics), 'ogbn-arxiv' (Ogbn-arxiv).
+    Options include `cora` (Cora), `citeseer` (Citeseer), `pubmed` (Pubmed), `amz-computer` (Amazon-Computer),
+    `amz-photo` (Amazon-Photos), `co-cs` (Coauthor-CS), `co-phy` (Coauthor-Physics), `ogbn-arxiv` (Ogbn-arxiv).
     Default: `cora`. 
     - --pretr_state: the version of pretrained GNN model (only for CoCoS-enhanced models). 
     In the pretrain stage, we will store two versions of the pretrained model, 
@@ -136,6 +186,7 @@ CoCoS
     - --num_heads: the number of attention heads for GAT.
     Default: `8`.
     - --agg_type: the aggregation type of each GraphSAGE layer (`sageconv` module in DGL).
+    Only for GraphSAGE
     Default: `gcn`.
     - --gpu: specify the GPU index for model training.
     Use `-1` for CPU training.
