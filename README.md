@@ -24,7 +24,7 @@ The information of the corresponding paper is as follows:
 
 The paper will be available soon on the AAAI library.
 
-## A Brief Introduction for CoCoS
+## A Brief Introduction of CoCoS
 
 ### Motivation
 
@@ -91,7 +91,9 @@ paper).
 - [x] trainers for each model (only for small datasets, such as Cora, Citeseer and Pubmed)
 - [x] other utilizations
 - [x] Clean up
-- [ ] Instructions (the readme file) for this repo
+- [x] Basic instructions (the readme file) for this repo
+- [ ] Details (hyperparameters for reproduction)
+- [ ] Experimental results
 
 ## Requirements
 
@@ -108,7 +110,7 @@ paper).
 CoCoS is an GNN enhancement techniques, which will be applied to a pretrained GNN model.
 Let's take GCN on Cora as an example, steps and commands are as follows:
 1. Pre-train GCN on Cora: `python --dataset cora --model GCN`.
-2. Enhance GCN with CoCoS: `python --dataset cora --model GCNCoCoS`.
+2. Enhance GCN with CoCoS: `python --dataset cora --model GCNCoCoS --lr 0.05`.
 
 Step 1 will will create a folder `GCNCoCoS_ori` under `./exp/` to store all experimental results, 
 including hyperparameters, accuracies and model parameters.
@@ -175,7 +177,7 @@ CoCoS
     - --hid_dim: the hidden dimension of each GNN layer.
     Default: `16`.
     - emb_hid_dim: the hidden dimension of each layer in the discriminator.
-    Default: `32`.
+    Default: `64`.
     Only for CoCoS-enhanced model.
     - --dropout: dropout rate.
     Default: `0.6`.
@@ -244,4 +246,60 @@ Will be created in the first time to run the experiment.
 
 ### Datasets
 
+We conduct experiments on several experiments, including Cora, Citeseer, Pubmed and Ogbn-arxiv.
+The train-validation-test split follows the standard splits of the corresponding dataset.
+The data statistics are provided as follows:
 
+| Dataset    | \# Nodes  | \# Edges  | \# Classes    | \# Attributes | Train/ Val/ Test Split    | Label Rate (\%)   |
+| ---------  | --------- | --------  | ------------- | ------------- | ------------------------- | ----------------- |
+| Cora       | 2708      | 5228      | 7             | 1433          | 140/ 500/ 1000            | 5.17              |
+| Citeseer   | 3327      | 4614      | 6             | 3703          | 120/ 500/ 1000            | 3.62              |
+| Pubmed     | 19717     | 44338     | 3             | 500           | 60/ 500/ 1000             | 0.30              |
+| Ogbn-arxiv | 169343    | 2501829   | 40            | 128           | 90941/ 29799/ 48603       | 53.70             |
+
+We also conduct experiments on Amazon-Computers, Amazon-Photos, Coauthor-CS and Coauthor-Physics datasets.
+Results on these additional datasets will be provided soon.
+
+### Hyperparameters to Reproduce the Results
+
+#### Pretraining GNN Backbone Models
+- For experiments on Cora, Citeseer and Pubmed:
+    - n_epochs: `300`
+    - n_layers: `2`
+    - cls_layers: `1` (only for JKNet)
+    - hid_dim: `16`
+    - dropout: `0.6`
+    - num_heads: `8` (only for GAT)
+    - agg_type: `gcn` or `mean` (only for GraphSAGE)
+    - lr: `0.01`
+    - weight_decay: `5e-4`
+    - split: `None`
+    
+    Command: `python run_experiment.py --dataset {dataset name} --model {model name} --round 10 {above arguments}`
+    
+
+
+- For experiments on Ogbn-arxiv:
+    - n_epochs:
+
+    Command: `python run_experiment.py --dataset ogbn-arxiv --model {model name} --round 10 {above arguments}`
+    
+
+For SGC, `hid_dim` can be ignored.
+    
+#### Enhancing GNN Backbone Models with CoCoS
+- For experiments on Cora, Citeseer and Pubmed:
+    - pretr_state: `val`
+    - eta: `10`
+    - dis_layers: `2`
+    - emb_hid_dim: `64`
+    - lr: `0.05`
+    - alpha: `0.6`
+    - cls_mode: `both`
+    - ctr_mode: `FS`
+    - others keep the same as that of the pretrained GNN backbone
+
+    Command: `python run_experiment.py --dataset {dataset name} --model {model name} --round 10 {arguments for pretrained backbone GNN} 
+    {above arguments}`
+    
+    - For experiments on Ogbn-arxiv:
