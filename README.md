@@ -2,11 +2,14 @@
 
 <p align="center"><img alt='A CoCoS exmaple' width="60%" src="assets/CoCoS_node_classification_example.png" /></p>
 
-This is the code repository of **AAAI 2022** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled Data via Contrastive Context Sharing'.
+This is the code repository of **AAAI 2022** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled 
+Data via Contrastive Context Sharing'.
 CoCos is an enhancement technique for GNN-based models.
 It aims to improve GNN's representation capacity and performance when labeled nodes are scarce in a given dataset.
 The main task is for node classifications.
 The information of the corresponding paper is as follows:
+
+> Title: CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled Data via Contrastive Context Sharing
 
 > Authors: Siyue Xie, Da Sun Handason Tam and Wing Cheong Lau
 
@@ -23,6 +26,16 @@ The information of the corresponding paper is as follows:
 >Extensive experiments show that CoCoS considerably enhances typical GNN models, especially when labeled data are sparse in a graph, and achieves state-of-the-art or competitive results in real-world public datasets. 
 
 The paper will be available soon on the AAAI library.
+
+## Cite This Work
+```
+@article{xie2022cocos,
+  title={CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled Data via Contrastive Context Sharing},
+  author={Xie, Siyue and Tam, Da Sun Handason and Lau, Wing Cheong},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2022},
+}
+```
 
 ## A Brief Introduction of CoCoS
 
@@ -92,7 +105,7 @@ paper).
 - [x] other utilizations
 - [x] Clean up
 - [x] Basic instructions (the readme file) for this repo
-- [ ] Details (hyperparameters for reproduction)
+- [x] Details (hyperparameters for reproduction)
 - [ ] Experimental results
 
 ## Requirements
@@ -314,7 +327,7 @@ For SGC, `hid_dim` can be ignored.
     - eta: `10`
     - dis_layers: `2`
     - emb_hid_dim: `64`
-    - **lr: `0.05`** (for all except SGC) or `0.2` (for SGC only)
+    - **lr: `0.05` (for all except SGC) or `0.2` (for SGC only)**
     - alpha: `0.6`
     - cls_mode: `both`
     - ctr_mode: `FS`
@@ -346,4 +359,35 @@ For SGC, `hid_dim` can be ignored.
     (the default value of some arguments are the same as the listed)
     
 For SGC, `hid_dim` can be ignored.
+
+## Experimental Results
+
+```
+n2v: node2vec
+n2v+feat: node2vec with node features
+SAGE(g): GraphSAGE with gcn aggregator
+SAGE(m): GraphSAGE with mean aggregator
+```
+
+
+| Models        | Cora      | Citeseer  | Pubmed    | Ogbn-arxiv            |
+| ---------     | -----     | --------  | -------   | -------------         |
+| MLP           | 58.51     | 55.64     | 72.71     | 55.50 &pm; 0.23       |
+| n2v           | 72.35     | 50.82     | 62.03     | -                     |
+| n2v+feat      | -         | -         | -         | 70.07 &pm; 0.13       |
+| DGI           | 82.30     | 71.80     | 76.80     | -                     | 
+| BGRL          | -         | -         | -         | 71.57 &pm; 0.11       | 
+| MVGRL         | **86.80** | 73.30     | 80.10     | -                     | 
+| GCN           | 82.12     | 71.07     | 78.79     | 71.51 &pm; 0.14       | 
+| GAT           | 81.95     | 70.68     | 78.29     | 72.24 &pm; 0.16       |
+| SAGE(g)       | 82.06     | 70.66     | 78.65     | 71.41 &pm; 0.12       |
+| SAGE(m)       | 81.55     | 69.76     | 78.49     | 71.49 &pm; 0.09       |
+| JK-Net        | 80.69     | 68.03     | 78.65     | 71.49 &pm; 0.15       |
+| SGC           | 80.55     | 72.00     | 78.86     | 69.95 &pm; 0.14       |  
+| GCN-CoCoS     | 84.15     | **73.57** | 80.92     | 71.77 &pm; 0.11       | 
+| GAT-CoCoS     | 83.81     | 72.98     | 79.85     | **72.95** &pm; 0.19   |
+| SAGE(g)-CoCoS | 83.77     | 73.10     | **81.59** | 71.60 &pm; 0.14       |
+| SAGE(m)-CoCoS | 83.58     | 73.44     | 80.68     | 71.73 &pm; 0.10       |
+| JK-Net-CoCoS  | 83.59     | 71.47     | 80.68     | 71.88 &pm; 0.18       |
+| SGC-CoCoS     | 81.33     | 72.39     | 79.35     | 69.65 &pm; 0.16       |  
 
