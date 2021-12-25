@@ -140,9 +140,9 @@ if __name__ == '__main__':
                         help="dropout rate")
     parser.add_argument("--input_drop", type=float, default=0.25,
                         help="dropout for input features, only for models for Ogbn-arxiv")
-    parser.add_argument("--attn_drop", type=float, default=0.6,
+    parser.add_argument("--attn_drop", type=float, default=0,
                         help="attention dropout rate, only for GAT")
-    parser.add_argument("--edge_drop", type=float, default=0.3,
+    parser.add_argument("--edge_drop", type=float, default=0,
                         help="edge dropout rate, only for GAT for Ogbn-arxiv")
     parser.add_argument("--num_heads", type=int, default=8,
                         help="the number of attention heads, only for GAT")

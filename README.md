@@ -184,9 +184,9 @@ CoCoS
     - --input_drop: the input dropout rate, only for models for Ogbn-arxiv.
     Default: `0.25`.
     - --attn_drop: the attention dropout rate, only for GAT.
-    Default: `0.6`.
+    Default: `0`.
     - --edge_drop: the edge dropout rate, only for GAT in Ogbn-arxiv.
-    Default: `0.3`.
+    Default: `0`.
     - --num_heads: the number of attention heads for GAT.
     Default: `8`.
     - --agg_type: the aggregation type of each GraphSAGE layer (`sageconv` module in DGL).
@@ -247,6 +247,8 @@ Will be created in the first time to run the experiment.
 ### Datasets
 
 We conduct experiments on several experiments, including Cora, Citeseer, Pubmed and Ogbn-arxiv.
+These four datasets are all paper citation networks, i.e., a node stands for a paper and edge between two nodes 
+indicate a reference/ citation relation between two paper.
 The train-validation-test split follows the standard splits of the corresponding dataset.
 The data statistics are provided as follows:
 
@@ -262,29 +264,48 @@ Results on these additional datasets will be provided soon.
 
 ### Hyperparameters to Reproduce the Results
 
+Note that the following sets of hyperparameters may not be optimal for each model, but you can use them to 
+reproduce the reported results in the paper.
+
 #### Pretraining GNN Backbone Models
 - For experiments on Cora, Citeseer and Pubmed:
     - n_epochs: `300`
     - n_layers: `2`
     - cls_layers: `1` (only for JKNet)
-    - hid_dim: `16`
+    - hid_dim: `16` (for all except GAT) or `8` (for GAT only)
     - dropout: `0.6`
     - num_heads: `8` (only for GAT)
     - agg_type: `gcn` or `mean` (only for GraphSAGE)
-    - lr: `0.01`
-    - weight_decay: `5e-4`
+    - lr: `0.01` (for all except SGC) or `0.2` (for SGC only)
+    - weight_decay: `5e-4` (for all except SGC) or `5e-5` (for SGC only)
     - split: `None`
     
     Command: `python run_experiment.py --dataset {dataset name} --model {model name} --round 10 {above arguments}`
     
-
+    Example: `python run_experiment.py --dataset pubmed --model SAGE --round 10 --gpu 0` 
+    (the default value of some arguments are the same as the listed)
 
 - For experiments on Ogbn-arxiv:
-    - n_epochs:
+    - n_epochs: `1000`
+    - n_layers: `3`
+    - cls_layers: `1` (only for JKNet)
+    - hid_dim: `256`
+    - dropout: `0.75`
+    - input_drop: `0.25`
+    - attn_drop: `0` (only for GAT)
+    - edge_drop: `0` (only for GAT)
+    - num_heads: `3` (only for GAT)
+    - agg_type: `gcn` or `mean` (only for GraphSAGE)
+    - lr: `0.002` (for all except SGC) or `0.2` (for SGC only)
+    - weight_decay: `5e-4` (for all except SGC) or `5e-5` (for SGC only)
+    - split: `None`
 
     Command: `python run_experiment.py --dataset ogbn-arxiv --model {model name} --round 10 {above arguments}`
     
-
+    Example: `python run_experiment.py --dataset ogbn-arxiv --model GAT --round 10 --n_epochs 1000 --n_layers 3 
+    --hid_dim 256 --dropout 0.75 --lr 0.002 --num_heads 3 --gpu 0` 
+    (the default value of some arguments are the same as the listed)
+    
 For SGC, `hid_dim` can be ignored.
     
 #### Enhancing GNN Backbone Models with CoCoS
@@ -293,13 +314,36 @@ For SGC, `hid_dim` can be ignored.
     - eta: `10`
     - dis_layers: `2`
     - emb_hid_dim: `64`
-    - lr: `0.05`
+    - **lr: `0.05`** (for all except SGC) or `0.2` (for SGC only)
     - alpha: `0.6`
     - cls_mode: `both`
     - ctr_mode: `FS`
-    - others keep the same as that of the pretrained GNN backbone
+    - **others keep the same as that of the pretrained GNN backbone**
 
-    Command: `python run_experiment.py --dataset {dataset name} --model {model name} --round 10 {arguments for pretrained backbone GNN} 
-    {above arguments}`
+    Command: `python run_experiment.py --dataset {dataset name} --model {model name} --round 10 
+    {arguments for the pretrained GNN backbone} {above arguments}`
     
-    - For experiments on Ogbn-arxiv:
+    Example: `python run_experiment.py --dataset pubmed --model SAGECoCoS --round 10 --gpu 0` 
+    (the default value of some arguments are the same as the listed)
+    
+- For experiments on Ogbn-arxiv:
+    - pretr_state: `val`
+    - **n_epochs: `300`**
+    - eta: `10`
+    - n_cls_pershuf: `4`
+    - dis_layers: `2`
+    - emb_hid_dim: `256`
+    - alpha: `0.6`
+    - cls_mode: `both`
+    - ctr_mode: `FS`
+    - **others keep the same as that of the pretrained GNN backbone**
+
+    Command: `python run_experiment.py --dataset ogbn-arxiv --model {model name} --round 10 
+    {arguments for the pretrained GNN backbone} {above arguments}`
+    
+    Example: `python run_experiment.py --dataset ogbn-arxiv --model GATCoCoS --round 10 --n_epochs 300 --n_layers 3 
+    --hid_dim 256 --dropout 0.75 --lr 0.002 --num_heads 3 --eta 10 --n_cls_shuf 4 --emb_hid_dim 256 --gpu 0` 
+    (the default value of some arguments are the same as the listed)
+    
+For SGC, `hid_dim` can be ignored.
+
