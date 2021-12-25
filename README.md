@@ -220,7 +220,7 @@ CoCoS
     - --ctr_mode: the type of positive pairs for contrastive learning.
     Options: `F`, `T`, `M`, `S` or their combinations, e.g., `MS`.
     Default: `FS`.
-    - --bn: a flag to indicate whether to use batch normalization for training.
+    - --bn: a flag to indicate whether to use batch normalization for training. Default: `False`
 
 - `run_experiments.py`: a script to repeatedly run experiments using the same set of hyperparameters but with different 
 random seed, which is for experiments reproduction.
@@ -301,11 +301,12 @@ reproduce the reported results in the paper.
     - lr: `0.002` (for all except SGC) or `0.2` (for SGC only)
     - weight_decay: `5e-4` (for all except SGC) or `5e-5` (for SGC only)
     - split: `None`
+    - **bn**
 
-    Command: `python run_experiment.py --dataset ogbn-arxiv --model {model name} --round 10 {above arguments}`
+    Command: `python run_experiment.py --dataset ogbn-arxiv --model {model name} --round 10 {above arguments} --bn`
     
     Example: `python run_experiment.py --dataset ogbn-arxiv --model GAT --round 10 --n_epochs 1000 --n_layers 3 
-    --hid_dim 256 --dropout 0.75 --lr 0.002 --num_heads 3 --gpu 0` 
+    --hid_dim 256 --dropout 0.75 --lr 0.002 --num_heads 3 --gpu 0 --bn` 
     (the default value of some arguments are the same as the listed)
     
 For SGC, `hid_dim` can be ignored.
@@ -341,10 +342,10 @@ For SGC, `hid_dim` can be ignored.
     - **others keep the same as that of the pretrained GNN backbone**
 
     Command: `python run_experiment.py --dataset ogbn-arxiv --model {model name} --round 10 
-    {arguments for the pretrained GNN backbone} {above arguments}`
+    {arguments for the pretrained GNN backbone} {above arguments} --bn`
     
     Example: `python run_experiment.py --dataset ogbn-arxiv --model GATCoCoS --round 10 --n_epochs 300 --n_layers 3 
-    --hid_dim 256 --dropout 0.75 --lr 0.002 --num_heads 3 --eta 10 --n_cls_shuf 4 --emb_hid_dim 256 --gpu 0` 
+    --hid_dim 256 --dropout 0.75 --lr 0.002 --num_heads 3 --eta 10 --n_cls_shuf 4 --emb_hid_dim 256 --gpu 0 --bn` 
     (the default value of some arguments are the same as the listed)
     
 For SGC, `hid_dim` can be ignored.
