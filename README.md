@@ -133,8 +133,8 @@ CoCoS
 │   └───__init__.py
 │   └───data_preparation.py
 └───dataset
-│   └───Cora
-│   └───Citeseer
+│   └───cora
+│   └───citeseer
 │   └───...
 └───exp
 │   └───GCN_ori
@@ -185,7 +185,7 @@ CoCoS
     Default: `0.6`.
     - --input_drop: the input dropout rate, only for models for Ogbn-arxiv.
     Default: `0.25`.
-    - --attn_drop: the attention dropout rate, only for GAT.
+    - --attn_drop: the attention dropout rate, only for GAT in Ogbn-arxiv.
     Default: `0`.
     - --edge_drop: the edge dropout rate, only for GAT in Ogbn-arxiv.
     Default: `0`.

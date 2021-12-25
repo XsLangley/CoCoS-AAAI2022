@@ -5,10 +5,10 @@ import argparse
 def main(args):
     model = args.model
     num_round = args.round
-    dataset =args.dataset
+    dataset = args.dataset
     pretr_states = args.pretr_state
     n_epochs = args.n_epochs
-    n_step_epochs = args.n_step_epochs
+    eta = args.eta
     n_cls_pershuf = args.n_cls_pershuf
     n_layers = args.n_layers
     cls_layers = args.cls_layers
@@ -25,33 +25,33 @@ def main(args):
     lr = args.lr
     wd = args.weight_decay
     split = args.split
-    wctr = args.wctr
+    alpha = args.alpha
     cls_mode = args.cls_mode
     ctr_mode = args.ctr_mode
     bn = args.bn
 
     for r in range(num_round):
         run_cmd = "python -u main.py --model {m} --seed {seed} --dataset {db} --pretr_state {ptrst} " \
-                  "--n_epochs {ep} --n_step_epochs {nsep} --n_cls_pershuf {ncps} " \
+                  "--n_epochs {ep} --eta {eta} --n_cls_pershuf {ncps} " \
                   "--n_layers {nl} --cls_layers {cl} --dis_layers {dl} " \
                   "--hid_dim {hid_dim} --emb_hid_dim {ehd} " \
                   "--num_heads {nh} --agg_type {at} " \
                   "--gpu {gpu} --lr {lr} --weight_decay {wd} --split {spt} " \
-                  "--wctr {wctr} --cls_mode {clsm} --ctr_mode {ctrm} " \
+                  "--alpha {alpha} --cls_mode {clsm} --ctr_mode {ctrm} " \
                   "--dropout {dp} --attn_drop {adp} " \
                   "{idp} {edp} {bn} ".format(
             m=model, seed=r, db=dataset, ptrst=pretr_states,
-            ep=n_epochs, nsep=n_step_epochs, ncps=n_cls_pershuf,
+            ep=n_epochs, eta=eta, ncps=n_cls_pershuf,
             nl=n_layers, cl=cls_layers, dl=dis_layers,
             hid_dim=hid_dim, ehd=emb_hid_dim,
-            nh=nh,  at=agg_type,
+            nh=nh, at=agg_type,
             gpu=gpu, lr=lr, wd=wd, spt=split,
-            wctr=wctr, clsm=cls_mode, ctrm=ctr_mode,
+            alpha=alpha, clsm=cls_mode, ctrm=ctr_mode,
             dp=dropout, adp=adp,
             idp='--input_drop {}'.format(idp) if dataset == 'ogbn-arxiv' else '',
             edp='--edge_drop {}'.format(edp) if dataset == 'ogbn-arxiv' else '',
             bn='--bn' if bn else '',
-            )
+        )
         os.system(run_cmd)
 
 
