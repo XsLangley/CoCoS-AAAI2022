@@ -97,17 +97,6 @@ The model can then be trained through backward-propagation based on the overall 
 paper).
 
 
-## Progress
-- [x] the entrance run script for results reproduction
-- [x] the main program for one experiment (only for small datasets, such as Cora, Citeseer and Pubmed)
-- [x] data preparation script/ data preprocessing program
-- [x] trainers for each model (only for small datasets, such as Cora, Citeseer and Pubmed)
-- [x] other utilizations
-- [x] Clean up
-- [x] Basic instructions (the readme file) for this repo
-- [x] Details (hyperparameters for reproduction)
-- [ ] Experimental results
-
 ## Requirements
 
 - DGL >= 0.6 (or newer versions)
@@ -391,3 +380,5 @@ SAGE(m): GraphSAGE with mean aggregator
 | JK-Net-CoCoS  | 83.59     | 71.47     | 80.68     | 71.88 &pm; 0.18       |
 | SGC-CoCoS     | 81.33     | 72.39     | 79.35     | 69.65 &pm; 0.16       |  
 
+For more detailed ablation studies and additional experiments, please refer to our paper and the corresponding 
+supplementary materials.
