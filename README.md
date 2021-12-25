@@ -114,10 +114,10 @@ Let's take GCN on Cora as an example, steps and commands are as follows:
 1. Pre-train GCN on Cora: `python --dataset cora --model GCN`.
 2. Enhance GCN with CoCoS: `python --dataset cora --model GCNCoCoS --lr 0.05`.
 
-Step 1 will will create a folder `GCNCoCoS_ori` under `./exp/` to store all experimental results, 
-including hyperparameters, accuracies and model parameters.
-Step 2 will create a folder `GCN_ori` under `./exp/` to store all experimental results, 
-including hyperparameters, accuracies and model parameters.
+Step 1 will will create a folder `GCN_ori` under `./exp/` to store all experimental results, 
+including hyperparameters, accuracies and model parameters, etc.
+Step 2 will create a folder `GCNCoCoS_ori` under `./exp/` to store all experimental results, 
+including hyperparameters, accuracies and model parameters, etc.
 
 ### Directory Tree
 ```
