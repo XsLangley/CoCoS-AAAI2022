@@ -5,7 +5,7 @@ import argparse
 def main(args):
     model = args.model
     num_round = args.round
-    datasets = args.dataset.strip().split('-')
+    dataset =args.dataset
     pretr_states = args.pretr_state
     n_epochs = args.n_epochs
     eta = args.eta
@@ -20,43 +20,41 @@ def main(args):
     adp = args.attn_drop
     edp = args.attn_drop
     nh = args.num_heads
-    agg_types = args.agg_type.strip().split('-')
+    agg_type = args.agg_type
     gpu = args.gpu
-    lrs = args.lr.strip().split('-')
+    lr = args.lr
     wd = args.weight_decay
     split = args.split
     alpha = args.alpha
-    cls_modes = args.cls_mode.strip().split('-')
-    ctr_modes = args.ctr_mode.strip().split('-')
+    cls_mode = args.cls_mode
+    ctr_mode = args.ctr_mode
     bn = args.bn
-    for dataset in datasets:
-        for lr in lrs:
-            for cls_mode in cls_modes:
-                for ctr_mode in ctr_modes:
-                    for agg_type in agg_types:
-                        for r in range(num_round):
-                            run_cmd = "python -u main.py --model {m} --seed {seed} --dataset {db} --pretr_state {ptrst} " \
-                                      "--n_epochs {ep} --eta {eta} --n_cls_pershuf {ncps} " \
-                                      "--n_layers {nl} --cls_layers {cl} --dis_layers {dl} " \
-                                      "--hid_dim {hid_dim} --emb_hid_dim {ehd} " \
-                                      "--num_heads {nh} --agg_type {at} " \
-                                      "--gpu {gpu} --lr {lr} --weight_decay {wd} --split {spt} " \
-                                      "--alpha {alpha} --cls_mode {clsm} --ctr_mode {ctrm} " \
-                                      "--dropout {dp} --attn_drop {adp} " \
-                                      "{idp} {edp} {bn} ".format(
-                                m=model, seed=r, db=dataset, ptrst=pretr_states,
-                                ep=n_epochs, eta=eta, ncps=n_cls_pershuf,
-                                nl=n_layers, cl=cls_layers, dl=dis_layers,
-                                hid_dim=hid_dim, ehd=emb_hid_dim,
-                                nh=nh, at=agg_type,
-                                gpu=gpu, lr=lr, wd=wd, spt=split,
-                                alpha=alpha, clsm=cls_mode, ctrm=ctr_mode,
-                                dp=dropout, adp=adp,
-                                idp='--input_drop {}'.format(idp) if dataset == 'ogbn-arxiv' else '',
-                                edp='--edge_drop {}'.format(edp) if dataset == 'ogbn-arxiv' else '',
-                                bn='--bn' if bn else '',
-                            )
-                            os.system(run_cmd)
+    hs = args.hs
+
+    for r in range(num_round):
+        run_cmd = "python -u main.py --model {m} --seed {seed} --dataset {db} --pretr_state {ptrst} " \
+                  "--n_epochs {ep} --eta {eta} --n_cls_pershuf {ncps} " \
+                  "--n_layers {nl} --cls_layers {cl} --dis_layers {dl} " \
+                  "--hid_dim {hid_dim} --emb_hid_dim {ehd} " \
+                  "--num_heads {nh} --agg_type {at} " \
+                  "--gpu {gpu} --lr {lr} --weight_decay {wd} --split {spt} " \
+                  "--alpha {alpha} --cls_mode {clsm} --ctr_mode {ctrm} " \
+                  "--dropout {dp} --attn_drop {adp} " \
+                  "{idp} {edp} {bn} {hs} ".format(
+            m=model, seed=r, db=dataset, ptrst=pretr_states,
+            ep=n_epochs, eta=eta, ncps=n_cls_pershuf,
+            nl=n_layers, cl=cls_layers, dl=dis_layers,
+            hid_dim=hid_dim, ehd=emb_hid_dim,
+            nh=nh,  at=agg_type,
+            gpu=gpu, lr=lr, wd=wd, spt=split,
+            alpha=alpha, clsm=cls_mode, ctrm=ctr_mode,
+            dp=dropout, adp=adp,
+            idp='--input_drop {}'.format(idp) if dataset == 'ogbn-arxiv' else '',
+            edp='--edge_drop {}'.format(edp) if dataset == 'ogbn-arxiv' else '',
+            bn='--bn' if bn else '',
+            hs='--hs' if hs else '',
+            )
+        os.system(run_cmd)
 
 
 if __name__ == '__main__':
@@ -114,6 +112,8 @@ if __name__ == '__main__':
                         help="the type of positive pairs for contrastive loss")
     parser.add_argument("--bn", action='store_true', default=False,
                         help="a flag to indicate whether use batchnorm for training")
+    parser.add_argument("--hs", action='store_true', default=False,
+                        help="a flag to indicate whether use hidden layer shuffling")
     args = parser.parse_args()
 
     main(args)
