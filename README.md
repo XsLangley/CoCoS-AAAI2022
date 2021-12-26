@@ -276,6 +276,7 @@ reproduce the reported results in the paper.
     - cls_layers: `1` (only for JKNet)
     - hid_dim: `16` (for all except GAT) or `8` (for GAT only)
     - dropout: `0.6`
+    - attn_drop: `0.6` (onlny for GAT)
     - num_heads: `8` (only for GAT)
     - agg_type: `gcn` or `mean` (only for GraphSAGE)
     - lr: `0.01` (for all except SGC) or `0.2` (for SGC only)
