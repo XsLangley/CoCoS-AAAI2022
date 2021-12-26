@@ -142,7 +142,7 @@ class GAT(nn.Module):
             num_heads = info_dict['num_heads'] if l < info_dict['n_layers'] - 1 else 1
             self.gat_layers.append(GATConv(
                 in_dim, out_dim, num_heads,
-                info_dict['dropout'], info_dict['att_drop'], 0.2, False, activation=act))
+                info_dict['dropout'], info_dict['attn_drop'], 0.2, False, activation=act))
 
     def forward(self, graph, feat):
 
