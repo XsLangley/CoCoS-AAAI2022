@@ -50,31 +50,31 @@ def main(args):
         info_dict.update({'backbone': 'GCN'})
         model = models_ogb.GCN(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.GCN(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+        trainer = trainers.CoCoSTrainerOGB(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
             else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'GATCoCoS':
         info_dict.update({'backbone': 'GAT'})
         model = models_ogb.GAT(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.GAT(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+        trainer = trainers.CoCoSTrainerOGB(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
             else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'SAGECoCoS':
         info_dict.update({'backbone': 'SAGE'})
         model = models_ogb.SAGE(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.SAGE(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+        trainer = trainers.CoCoSTrainerOGB(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
             else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'JKNetCoCoS':
         info_dict.update({'backbone': 'JKNet'})
         model = models_ogb.JKNet(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.JKNet(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+        trainer = trainers.CoCoSTrainerOGB(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
             else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     elif args.model == 'SGCCoCoS':
         info_dict.update({'backbone': 'SGC'})
         model = models_ogb.SGC(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.SGC(info_dict)
         Dis = models_ogb.DisMLP(info_dict) if args.dataset == 'ogbn-arxiv' else models_small.DisMLP(info_dict)
-        trainer = trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
+        trainer = trainers.CoCoSTrainerOGB(g, model, info_dict, Dis=Dis) if args.dataset == 'ogbn-arxiv' \
             else trainers.CoCoSTrainer(g, model, info_dict, Dis=Dis)
     else:
         raise ValueError("unknown model: {}".format(args.model))
