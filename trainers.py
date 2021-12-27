@@ -511,8 +511,7 @@ class CoCoSTrainerOGB(BaseTrainer):
         self.g = self.g.int().to(self.info_dict['device'])
 
         self.get_pred_labels()
-        if self.info_dict['reset']:
-            self.model.reset_param()
+
         for i in range(self.info_dict['n_epochs']):
             if i % self.info_dict['eta'] == 0:
                 # override the estimated labels by the given epoch gap
