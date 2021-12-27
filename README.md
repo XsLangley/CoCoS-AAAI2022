@@ -289,7 +289,7 @@ reproduce the reported results in the paper.
     (the default value of some arguments are the same as the listed)
 
 - For experiments on Ogbn-arxiv:
-    - n_epochs: `1000`
+    - n_epochs: `2000`
     - n_layers: `3`
     - cls_layers: `1` (only for JKNet)
     - hid_dim: `256`
@@ -300,7 +300,7 @@ reproduce the reported results in the paper.
     - num_heads: `3` (only for GAT)
     - agg_type: `gcn` or `mean` (only for GraphSAGE)
     - lr: `0.002` (for all except SGC) or `0.2` (for SGC only)
-    - weight_decay: `5e-4` (for all except SGC) or `5e-5` (for SGC only)
+    - weight_decay: `0` (for all except SGC) or `5e-5` (for SGC only)
     - split: `None`
     - **bn**
 
