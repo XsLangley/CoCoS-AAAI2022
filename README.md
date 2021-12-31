@@ -25,7 +25,8 @@ The information of the corresponding paper is as follows:
 >CoCoS can be easily extended to a wide range of GNN-based models with little computational overheads. 
 >Extensive experiments show that CoCoS considerably enhances typical GNN models, especially when labeled data are sparse in a graph, and achieves state-of-the-art or competitive results in real-world public datasets. 
 
-The paper will be available soon on the AAAI library.
+A preliminary version of our paper can be found in the directory `./paper/AAAI2022_CoCoS.rar`
+The formal published version of our paper will be available soon on the AAAI library.
 
 ## Cite This Work
 ```
@@ -262,7 +263,7 @@ The data statistics are provided as follows:
 | Ogbn-arxiv | 169343    | 2501829   | 40            | 128           | 90941/ 29799/ 48603       | 53.70             |
 
 We also conduct experiments on Amazon-Computers, Amazon-Photos, Coauthor-CS and Coauthor-Physics datasets.
-Results on these additional datasets will be provided soon.
+Results on these additional datasets refer to our paper.
 
 ### Hyperparameters to Reproduce the Results
 
