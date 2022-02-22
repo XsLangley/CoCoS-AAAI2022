@@ -2,7 +2,7 @@
 
 <p align="center"><img alt='A CoCoS exmaple' width="60%" src="assets/CoCoS_node_classification_example.png" /></p>
 
-This is the code repository of **AAAI 2022** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled 
+This is the code repository of **AAAI 2022 Oral** paper 'CoCoS: Enhancing Semi-Supervised Learning on Graphs with Unlabeled 
 Data via Contrastive Context Sharing'.
 CoCos is an enhancement technique for GNN-based models.
 It aims to improve GNN's representation capacity and performance when labeled nodes are scarce in a given dataset.
@@ -25,8 +25,10 @@ The information of the corresponding paper is as follows:
 >CoCoS can be easily extended to a wide range of GNN-based models with little computational overheads. 
 >Extensive experiments show that CoCoS considerably enhances typical GNN models, especially when labeled data are sparse in a graph, and achieves state-of-the-art or competitive results in real-world public datasets. 
 
-A preliminary version of our paper can be found in the directory `./paper/AAAI2022_CoCoS.rar`
-The formal published version of our paper will be available soon on the AAAI library.
+
+A preliminary version (including supplementary materials) of our paper can be found in the directory `./paper/AAAI2022_CoCoS.rar`
+
+The paper is now publicly accessible in the AAAI 2022 webpage: [click here](https://aaai-2022.virtualchair.net/poster_aaai4316).
 
 ## Cite This Work
 ```
