@@ -28,6 +28,8 @@ The information of the corresponding paper is as follows:
 The paper is now publicly accessible at the AAAI 2022 webpage: [click here](https://aaai-2022.virtualchair.net/poster_aaai4316).
 The supplementary materials of the paper can be found in `./paper/AAAI2022_COCOS_supp_mat.pdf`
 
+We also have a follow-up work [Violin](https://github.com/xslangley/violin) on CoCoS, which focuses on the same topic but with a different perspective.
+
 ## Cite This Work
 ```
 @article{xie2022cocos,
